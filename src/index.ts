@@ -11,6 +11,7 @@ import { Command } from 'commander';
 import { createErrorBox, createWelcomeBox, createInfoBox } from './utils.js';
 import { VALID_CLIENTS } from './constants.js';
 import { listCommand, installCommand } from './commands.js';
+import packageJson from '../package.json';
 
 console.log(
   createWelcomeBox(
@@ -33,9 +34,9 @@ program.configureOutput({
 program.exitOverride();
 
 program
-  .name('heurist-mcp-cli')
-  .description('CLI tool to install Heurist MCP tools')
-  .version('0.0.1');
+  .name(packageJson.name)
+  .description(packageJson.description)
+  .version(packageJson.version);
 
 program
   .command('install', { isDefault: true })
