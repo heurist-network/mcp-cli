@@ -2,11 +2,25 @@
   "name": "heurist-mcp-installer",
   "version": "1.0.0",
   "description": "CLI tool to install Heurist MCP tools",
+  "main": "dist/index.cjs",
   "module": "dist/index.cjs",
-  "type": "module",
+  "type": "commonjs",
+  "files": [
+    "dist"
+  ],
   "bin": {
     "heurist-mcp-installer": "./dist/index.cjs"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heurist-network/mcp-installer"
+  },
+  "bugs": {
+    "url": "https://github.com/heurist-network/mcp-installer/issues"
+  },
+  "author": "Heurist <team@heurist.xyz>",
+  "license": "MIT",
+  "homepage": "https://mcp.heurist.ai",
   "scripts": {
     "start": "node dist/index.cjs",
     "build": "tsc && node build.mjs && chmod +x dist/index.cjs",
