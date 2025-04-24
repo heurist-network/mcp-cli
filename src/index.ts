@@ -33,6 +33,7 @@ program.configureOutput({
 // override exit behavior to show help box on argument errors
 program.exitOverride();
 
+// ref: https://github.com/tj/commander.js/issues/2346
 program
   .name(packageJson.name)
   .description(packageJson.description)
