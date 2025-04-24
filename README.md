@@ -15,16 +15,16 @@ pnpm dlx github:heurist-network/mcp-installer
 ### Install a Tool
 
 ```bash
-npx -y github:heurist-network/mcp-installer <tool-url> <api-key> [client]
+npx -y github:heurist-network/mcp-installer <tool-url-or-id> <api-key> [client]
 ```
 
-- `<tool-url>`: The URL of the Heurist MCP tool.
+- `<tool-url-or-id>`: The full URL of the Heurist MCP tool, or just the short tool ID (e.g., `0f1234de`).
 - `<api-key>`: Your API key for verification.
 - `[client]` (optional): Specify a client (`claude`, `windsurf`, `cursor`, `vscode`, `vscode-insiders`). If omitted, you will be prompted to select one from the detected clients.
 
 Example:
 ```bash
-npx -y github:heurist-network/mcp-installer https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor
+npx -y github:heurist-network/mcp-installer 0f1234de api_key cursor
 ```
 
 ### List Detected Clients
