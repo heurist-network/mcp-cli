@@ -33,7 +33,7 @@ program.configureOutput({
 program.exitOverride();
 
 program
-  .name('heurist-mcp-installer')
+  .name('heurist-mcp-cli')
   .description('CLI tool to install Heurist MCP tools')
   .version('0.0.1');
 
@@ -90,11 +90,11 @@ ${chalk.red(error instanceof Error ? error.message : String(error))}`,
       createInfoBox(
         `${chalk.bold('Usage')}\n
 ${chalk.dim('→')} Install a tool:
-  ${chalk.green('heurist-mcp-installer')} ${chalk.yellow('<tool-url>')} ${chalk.yellow('<api-key>')} ${chalk.dim('[client]')}\n
+  ${chalk.green('heurist-mcp-cli')} ${chalk.yellow('<tool-url>')} ${chalk.yellow('<api-key>')} ${chalk.dim('[client]')}\n
 ${chalk.dim('→')} List detected clients:
-  ${chalk.green('heurist-mcp-installer list')}\n
+  ${chalk.green('heurist-mcp-cli list')}\n
 ${chalk.dim('Example:')}
-  ${chalk.green('heurist-mcp-installer')} ${chalk.dim('https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor')}`,
+  ${chalk.green('heurist-mcp-cli')} ${chalk.dim('https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor')}`,
         'Help',
       ),
     );
