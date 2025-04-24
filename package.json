@@ -15,6 +15,7 @@
     "lint": "biome lint .",
     "lint:fix": "biome lint --write --unsafe",
     "format": "biome format --write",
+    "prepare": "bun run build",
     "prepublish": "bun run clean && bun run build"
   },
   "devDependencies": {
