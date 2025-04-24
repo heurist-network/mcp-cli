@@ -40,6 +40,9 @@ export async function verifyServer(
   });
 
   if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Server verification failed: Invalid tool ID or URL.');
+    }
     throw new Error(`Server verification failed: ${response.statusText}`);
   }
 
