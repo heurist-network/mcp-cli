@@ -81,21 +81,23 @@ ${chalk.red(error instanceof Error ? error.message : String(error))}`,
     }
   });
 
-try {
-  await program.parseAsync();
-} catch (err) {
-  // show help box on argument errors
-  console.log(
-    createInfoBox(
-      `${chalk.bold('Usage')}\n
+(async () => {
+  try {
+    await program.parseAsync();
+  } catch (err) {
+    // show help box on argument errors
+    console.log(
+      createInfoBox(
+        `${chalk.bold('Usage')}\n
 ${chalk.dim('→')} Install a tool:
   ${chalk.green('heurist-mcp-installer')} ${chalk.yellow('<tool-url>')} ${chalk.yellow('<api-key>')} ${chalk.dim('[client]')}\n
 ${chalk.dim('→')} List detected clients:
   ${chalk.green('heurist-mcp-installer list')}\n
 ${chalk.dim('Example:')}
   ${chalk.green('heurist-mcp-installer')} ${chalk.dim('https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor')}`,
-      'Help',
-    ),
-  );
-  process.exit(1);
-}
+        'Help',
+      ),
+    );
+    process.exit(1);
+  }
+})();
