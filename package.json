@@ -1,7 +1,7 @@
 {
   "name": "heurist-mcp-cli",
   "version": "0.0.1",
-  "description": "CLI tool to install Heurist MCP tools",
+  "description": "CLI tool to install Heurist SSE MCP tools",
   "main": "dist/index.cjs",
   "module": "dist/index.cjs",
   "type": "commonjs",
@@ -27,12 +27,16 @@
     "lint:fix": "biome lint --write --unsafe",
     "format": "biome format --write",
     "prepare": "npm run build",
-    "prepublish": "npm run lint && npm run format && npm run build"
+    "prepublishOnly": "npm run lint && npm run format && npm run build",
+    "release": "release-it"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@release-it/conventional-changelog": "^10.0.1",
     "@types/node": "^22.15.0",
-    "esbuild": "^0.25.3"
+    "esbuild": "^0.25.3",
+    "release-it": "^19.0.1",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "typescript": "^5"
