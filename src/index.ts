@@ -35,7 +35,7 @@ program.exitOverride();
 program
   .name('heurist-mcp-installer')
   .description('CLI tool to install Heurist MCP tools')
-  .version('1.0.0');
+  .version('0.0.1');
 
 program
   .command('install', { isDefault: true })
