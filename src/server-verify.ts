@@ -29,28 +29,22 @@ export async function verifyServer(
 ): Promise<ServerVerificationResponse> {
   const spinner = ora('Verifying server...').start();
 
-  try {
-    const serverId = extractServerIdFromUrl(url);
-    spinner.text = `Verifying server ${chalk.cyan(serverId)}...`;
+  const serverId = extractServerIdFromUrl(url);
+  spinner.text = `Verifying server ${chalk.cyan(serverId)}...\n`;
 
-    const response = await fetch(`${MCP_VERIFICATION_ENDPOINT}/${serverId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
+  const response = await fetch(`${MCP_VERIFICATION_ENDPOINT}/${serverId}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  });
 
-    if (!response.ok) {
-      spinner.fail(`Server verification failed: ${response.statusText}`);
-      throw new Error(`Server verification failed: ${response.statusText}`);
-    }
-
-    const serverDetails = (await response.json()) as ServerVerificationResponse;
-
-    spinner.succeed('Server verified ✓');
-    return serverDetails;
-  } catch (error) {
-    spinner.fail('Server verification failed');
-    throw error;
+  if (!response.ok) {
+    throw new Error(`Server verification failed: ${response.statusText}`);
   }
+
+  const serverDetails = (await response.json()) as ServerVerificationResponse;
+
+  spinner.succeed('Server verified ✓');
+  return serverDetails;
 }
