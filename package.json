@@ -1,0 +1,34 @@
+{
+  "name": "heurist-mcp-installer",
+  "version": "1.0.0",
+  "description": "CLI tool to install Heurist MCP tools",
+  "module": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "heurist-mcp-installer": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun run build.js",
+    "start": "bun run dist/index.js",
+    "clean": "rm -rf dist",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write --unsafe",
+    "format": "biome format --write",
+    "prepublish": "bun run clean && bun run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "boxen": "^8.0.1",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "enquirer": "^2.4.1",
+    "ora": "^8.2.0"
+  }
+}

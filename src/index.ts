@@ -1,0 +1,96 @@
+#!/usr/bin/env node
+/**
+ * Heurist MCP Installer
+ *
+ * A CLI tool to install Heurist MCP tools in compatible clients.
+ * It verifies the server using an API key, and installs the tool
+ * on all detected clients with visual feedback.
+ */
+import chalk from 'chalk';
+import { Command } from 'commander';
+import { createErrorBox, createWelcomeBox, createInfoBox } from './utils.js';
+import { VALID_CLIENTS } from './constants.js';
+import { listCommand, installCommand } from './commands.js';
+
+console.log(
+  createWelcomeBox(
+    `${chalk.bold('Heurist MCP Tool Installer')}\n
+This tool will install a Heurist MCP server tool in your compatible clients.
+${chalk.dim(`Supported clients: ${VALID_CLIENTS.join(', ')}`)}`,
+    'Welcome',
+  ),
+);
+
+const program = new Command();
+
+// suppress commander's error output
+program.configureOutput({
+  writeErr: () => {},
+  outputError: () => {},
+});
+
+// override exit behavior to show help box on argument errors
+program.exitOverride();
+
+program
+  .name('heurist-mcp-installer')
+  .description('CLI tool to install Heurist MCP tools')
+  .version('1.0.0');
+
+program
+  .command('install', { isDefault: true })
+  .description('Install or update MCP tool')
+  .argument('<url>', 'tool url')
+  .argument('<api_key>', 'api key')
+  .argument('[client]', 'specific client to install to')
+  .action(async (url, apiKey, client) => {
+    try {
+      await installCommand({ url, apiKey, client });
+    } catch (error) {
+      console.error(
+        createErrorBox(
+          `${chalk.bold('Installation failed')}\n
+${chalk.red(error instanceof Error ? error.message : String(error))}`,
+          'Error',
+        ),
+      );
+      process.exit(1);
+    }
+  });
+
+program
+  .command('list')
+  .description('List detected clients')
+  .action(async () => {
+    try {
+      await listCommand();
+    } catch (error) {
+      console.error(
+        createErrorBox(
+          `${chalk.bold('List failed')}\n
+${chalk.red(error instanceof Error ? error.message : String(error))}`,
+          'Error',
+        ),
+      );
+      process.exit(1);
+    }
+  });
+
+try {
+  await program.parseAsync();
+} catch (err) {
+  // show help box on argument errors
+  console.log(
+    createInfoBox(
+      `${chalk.bold('Usage')}\n
+${chalk.dim('→')} Install a tool:
+  ${chalk.green('heurist-mcp-installer')} ${chalk.yellow('<tool-url>')} ${chalk.yellow('<api-key>')} ${chalk.dim('[client]')}\n
+${chalk.dim('→')} List detected clients:
+  ${chalk.green('heurist-mcp-installer list')}\n
+${chalk.dim('Example:')}
+  ${chalk.green('heurist-mcp-installer')} ${chalk.dim('https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor')}`,
+      'Help',
+    ),
+  );
+  process.exit(1);
+}
