@@ -46,8 +46,8 @@ Lists clients where the tool can be installed.
 ## Development
 
 1. Clone the repo.
-2. `bun install`
-3. `bun run dev`
+2. `npm install`
+3. `npm run dev`
 
 ## Acknowledgements
 
