@@ -5,9 +5,9 @@ CLI tool to install [Heurist](https://heurist.ai/) MCP tools into compatible cli
 ## Installation
 
 ```bash
-bun install -g heurist-mcp-installer
+npx github:heurist-network/mcp-installer
 # or
-pnpm install -g heurist-mcp-installer
+pnpm dlx github:heurist-network/mcp-installer
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ pnpm install -g heurist-mcp-installer
 ### Install a Tool
 
 ```bash
-heurist-mcp-installer <tool-url> <api-key> [client]
+npx heurist-mcp-installer <tool-url> <api-key> [client]
 ```
 
 - `<tool-url>`: The URL of the Heurist MCP tool.
@@ -24,13 +24,13 @@ heurist-mcp-installer <tool-url> <api-key> [client]
 
 Example:
 ```bash
-heurist-mcp-installer https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor
+npx heurist-mcp-installer https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor
 ```
 
 ### List Detected Clients
 
 ```bash
-heurist-mcp-installer list
+npx heurist-mcp-installer list
 ```
 
 Lists clients where the tool can be installed.
