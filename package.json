@@ -5,9 +5,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.cjs",
   "type": "commonjs",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "bin": {
     "heurist-mcp-installer": "./dist/index.cjs"
   },
@@ -23,7 +21,7 @@
   "homepage": "https://mcp.heurist.ai",
   "scripts": {
     "start": "node dist/index.cjs",
-    "build": "tsc && node build.mjs && chmod +x dist/index.cjs",
+    "build": "tsc && node build.mjs",
     "clean": "rm -rf dist",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write --unsafe",
