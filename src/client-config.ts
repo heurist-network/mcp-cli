@@ -66,7 +66,7 @@ export function writeConfig(config: ClientConfig, client?: ValidClient): void {
   if (configPath.type === 'command') {
     writeConfigCommand(config, configPath);
   } else {
-    writeConfigFile(config, configPath);
+    writeConfigFile(config, configPath, client);
   }
 }
 
@@ -96,7 +96,11 @@ function writeConfigCommand(
   }
 }
 
-function writeConfigFile(config: ClientConfig, target: ClientFileTarget): void {
+function writeConfigFile(
+  config: ClientConfig,
+  target: ClientFileTarget,
+  client?: ValidClient,
+): void {
   const configDir = path.dirname(target.path);
   if (!fs.existsSync(configDir)) {
     fs.mkdirSync(configDir, { recursive: true });
@@ -109,10 +113,25 @@ function writeConfigFile(config: ClientConfig, target: ClientFileTarget): void {
     }
   } catch {}
 
-  fs.writeFileSync(
-    target.path,
-    JSON.stringify({ ...existingConfig, ...config }, null, 2),
-  );
+  let finalConfig = { ...existingConfig, ...config };
+
+  // TODO: This is a workaround to support Windsurf's config format.
+  // Windsurf uses `serverUrl` instead of `url` for MCP servers.
+  // Not sure if other clients use different keys, if they do I'll do a bigger refactor.
+  if (client === 'windsurf' && finalConfig.mcpServers) {
+    const transformedServers: Record<string, any> = {};
+    for (const [name, server] of Object.entries(finalConfig.mcpServers)) {
+      if (server && typeof server === 'object' && 'url' in server) {
+        const { url, ...rest } = server as UrlBasedServer;
+        transformedServers[name] = { ...rest, serverUrl: url };
+      } else {
+        transformedServers[name] = server;
+      }
+    }
+    finalConfig = { ...finalConfig, mcpServers: transformedServers };
+  }
+
+  fs.writeFileSync(target.path, JSON.stringify(finalConfig, null, 2));
 }
 
 export function detectInstalledClients(): ValidClient[] {
