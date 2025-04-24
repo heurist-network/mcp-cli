@@ -4,7 +4,7 @@ import { detectInstalledClients, readConfig } from './client-config.js';
 import { install } from './installer.js';
 import { extractServerIdFromUrl, verifyServer } from './server-verify.js';
 import { createInfoBox } from './utils.js';
-import { VALID_CLIENTS } from './constants.js';
+import { VALID_CLIENTS, MCP_SERVER_ID_PREFIX } from './constants.js';
 import type {
   ValidClient,
   CommandOptions,
@@ -112,7 +112,7 @@ async function validateAndPrepare(options: CommandOptions): Promise<{
   new URL(options.url); // validate URL
   const serverDetails = await verifyServer(options.url, options.apiKey);
   const client = await validateAndGetClient(options);
-  const serverId = `heurist-mcp-${extractServerIdFromUrl(options.url)}`;
+  const serverId = `${MCP_SERVER_ID_PREFIX}${extractServerIdFromUrl(options.url)}`;
 
   console.log(
     createInfoBox(
