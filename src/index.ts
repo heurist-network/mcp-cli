@@ -43,8 +43,13 @@ program
   .argument('<url>', 'tool url')
   .argument('<api_key>', 'api key')
   .argument('[client]', 'specific client to install to')
-  .action(async (url, apiKey, client) => {
+  .action(async (urlInput, apiKey, client) => {
     try {
+      let url = urlInput;
+      // check if the url looks like a short tool id (e.g., '0f1234de')
+      if (!urlInput.startsWith('http') && /^[a-f0-9]+$/i.test(urlInput)) {
+        url = `https://sequencer-v2.heurist.xyz/tool${urlInput}/sse`;
+      }
       await installCommand({ url, apiKey, client });
     } catch (error) {
       console.error(
