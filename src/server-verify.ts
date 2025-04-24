@@ -44,7 +44,7 @@ export async function verifyServer(
   }
 
   const serverDetails = (await response.json()) as ServerVerificationResponse;
-
-  spinner.succeed('Server verified ✓');
+  // whitespace after the checkmark
+  spinner.succeed(' Server verified');
   return serverDetails;
 }
