@@ -26,8 +26,8 @@
     "lint": "biome lint .",
     "lint:fix": "biome lint --write --unsafe",
     "format": "biome format --write",
-    "prepublish": "npm run lint && npm run format",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublish": "npm run lint && npm run format && npm run build"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
