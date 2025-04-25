@@ -139,6 +139,12 @@ export function detectInstalledClients(): ValidClient[] {
     try {
       const configPath = getConfigPath(client);
       if (configPath.type === 'file') {
+        // Special case for Windsurf: check if the windsurf folder exists in .codeium
+        // even if the MCP config file doesn't exist yet as Windsurf doesn't create one automatically
+        if (client === 'windsurf' && !fs.existsSync(configPath.path)) {
+          const windsurfDir = path.dirname(configPath.path);
+          return fs.existsSync(windsurfDir);
+        }
         return fs.existsSync(configPath.path);
       } else if (configPath.type === 'protocol') {
         // For protocol-based clients like VS Code, we need to check if they're installed
