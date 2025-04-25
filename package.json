@@ -30,7 +30,7 @@
     "format": "biome format --write",
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint && npm run format && npm run build",
-    "release": "dotenv release-it --"
+    "release": "dotenv release-it -- -i patch"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
