@@ -45,5 +45,4 @@ export type ValidClient =
   | 'cursor'
   | 'vscode'
   | 'vscode-insiders';
-export type UrlBasedClient = 'cursor' | 'windsurf';
 export type SupportedPlatform = 'win32' | 'darwin' | 'linux';

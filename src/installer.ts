@@ -11,44 +11,30 @@ import type {
   ServerVerificationResponse,
   UrlBasedServer,
   ValidClient,
-  UrlBasedClient,
 } from './types.js';
 import { formatError, createSuccessBox, createWarnBox } from './utils.js';
 import { MCP_SERVER_ID_PREFIX } from './constants.js';
 
-const URL_BASED_CLIENTS = ['cursor', 'windsurf'] as const;
-
-function isUrlBasedClient(client?: string): client is UrlBasedClient {
-  return URL_BASED_CLIENTS.includes(client as UrlBasedClient);
-}
-
-/**
- * Format the server configuration for the MCP runner
- * Creates the appropriate command and arguments based on platform and client
- */
 function formatServerConfig(
   serverDetails: ServerVerificationResponse,
-  apiKey: string,
   clientName?: ValidClient,
 ): ConfiguredServer | UrlBasedServer {
-  if (clientName && isUrlBasedClient(clientName)) {
-    return { url: serverDetails.mcp_endpoint };
+  if (clientName === 'claude') {
+    // only claude desktop uses mcp-remote, as it doesn't support SSE yet.
+    // ref: https://github.com/orgs/modelcontextprotocol/discussions/16
+    // ref: https://developers.cloudflare.com/agents/guides/remote-mcp-server/#connect-your-remote-mcp-server-to-claude-and-other-mcp-clients-via-a-local-proxy
+    const npxArgs = ['-y', 'mcp-remote', serverDetails.mcp_endpoint];
+
+    return process.platform === 'win32'
+      ? { command: 'cmd', args: ['/c', 'npx', ...npxArgs] }
+      : { command: 'npx', args: npxArgs };
   }
 
-  // only claude desktop uses mcp-remote, as it doesn't support SSE yet.
-  // ref: https://github.com/orgs/modelcontextprotocol/discussions/16
-  // ref: https://developers.cloudflare.com/agents/guides/remote-mcp-server/#connect-your-remote-mcp-server-to-claude-and-other-mcp-clients-via-a-local-proxy
-  const npxArgs = ['-y', 'mcp-remote', serverDetails.mcp_endpoint];
-
-  return process.platform === 'win32'
-    ? { command: 'cmd', args: ['/c', 'npx', ...npxArgs] }
-    : { command: 'npx', args: npxArgs };
+  // all other clients use URL-based configuration
+  return { url: serverDetails.mcp_endpoint };
 }
 
-async function checkExistingInstallation(
-  client: ValidClient,
-  serverId: string,
-): Promise<void> {
+async function checkExistingInstallation(client: ValidClient): Promise<void> {
   const config = readConfig(client);
   const existingServers = Object.keys(config.mcpServers)
     .filter((id) => id.startsWith(MCP_SERVER_ID_PREFIX))
@@ -111,7 +97,7 @@ export async function install(
   let installCount = 0;
 
   for (const client of detectedClients) {
-    await checkExistingInstallation(client, serverId);
+    await checkExistingInstallation(client);
 
     const clientSpinner = ora({
       text: `Installing on ${chalk.cyan(client)}...`,
@@ -120,7 +106,7 @@ export async function install(
 
     try {
       const config = readConfig(client);
-      const serverConfig = formatServerConfig(serverDetails, apiKey, client);
+      const serverConfig = formatServerConfig(serverDetails, client);
       config.mcpServers[serverId] = serverConfig;
       writeConfig(config, client);
       clientSpinner.succeed(`Installed on ${chalk.cyan(client)}`);
