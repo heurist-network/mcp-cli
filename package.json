@@ -5,13 +5,15 @@
   "main": "dist/index.cjs",
   "module": "dist/index.cjs",
   "type": "commonjs",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "bin": {
-    "heurist-mcp-cli": "./dist/index.cjs"
+    "heurist-mcp-cli": "dist/index.cjs"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heurist-network/mcp-cli"
+    "url": "git+https://github.com/heurist-network/mcp-cli.git"
   },
   "bugs": {
     "url": "https://github.com/heurist-network/mcp-cli/issues"
