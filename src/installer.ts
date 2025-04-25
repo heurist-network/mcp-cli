@@ -108,14 +108,22 @@ export async function install(
       const config = readConfig(client);
       const serverConfig = formatServerConfig(serverDetails, client);
 
-      // remove all existing mcp server entries before adding the new one
-      Object.keys(config.mcpServers).forEach((key) => {
-        if (key.startsWith(MCP_SERVER_ID_PREFIX)) {
-          delete config.mcpServers[key];
-        }
-      });
+      let idToWrite = serverId; // default to dynamic id
 
-      config.mcpServers[serverId] = serverConfig;
+      // use fixed id for vscode and vscode-insiders
+      if (client.includes('vscode')) {
+        idToWrite = 'heurist-mcp';
+        // no need to explicitly delete for vscode, just overwrite
+      } else {
+        // for other clients, remove all existing heurist mcp server entries first
+        Object.keys(config.mcpServers).forEach((key) => {
+          if (key.startsWith(MCP_SERVER_ID_PREFIX)) {
+            delete config.mcpServers[key];
+          }
+        });
+      }
+
+      config.mcpServers[idToWrite] = serverConfig;
       writeConfig(config, client);
       clientSpinner.succeed(`Installed on ${chalk.cyan(client)}`);
       installCount++;
@@ -127,21 +135,39 @@ export async function install(
   }
 
   if (installCount > 0) {
+    const finalServerName = detectedClients.some((c) => c.includes('vscode'))
+      ? 'heurist-mcp'
+      : serverId;
+
     const successMessage = `${chalk.bold('✨ Installation complete!')}\n
 ${chalk.dim('→')} Start or restart your client to use the tool
-${chalk.dim('→')} Your tool will appear as ${chalk.cyan(serverId)}`;
+${chalk.dim('→')} Your tool will appear as ${chalk.cyan(finalServerName)}`;
 
-    const claudeSpecificInstructions = detectedClients.includes('claude')
-      ? `\n\n${chalk.yellow('Note for Claude Desktop users:')}\n
+    const specificInstructions: string[] = [];
+
+    if (detectedClients.includes('claude')) {
+      specificInstructions.push(
+        `${chalk.yellow('Note for Claude Desktop users:')}\n
 ${chalk.dim('→')} Claude Desktop runs in the background
 ${chalk.dim('→')} Right-click the Claude icon in the system tray
 ${chalk.dim('→')} Select "Quit" and restart Claude Desktop
-${chalk.dim('→')} The new tool will appear in your tools list`
-      : '';
+${chalk.dim('→')} The new tool will appear in your tools list`,
+      );
+    }
 
-    console.log(
-      createSuccessBox(successMessage + claudeSpecificInstructions, 'Success'),
-    );
+    if (detectedClients.includes('vscode')) {
+      specificInstructions.push(
+        `${chalk.yellow('Note for VS Code users:')}\n
+${chalk.dim('→')} Enable Agent Mode for the tool to work:
+  ${chalk.dim('1.')} Open Settings (${process.platform === 'darwin' ? '⌘,' : 'Ctrl+,'})
+  ${chalk.dim('2.')} Search for ${chalk.cyan('"chat.agent.enabled"')}
+  ${chalk.dim('3.')} Check the box to enable agent mode`,
+      );
+    }
+
+    const fullMessage = [successMessage, ...specificInstructions].join('\n\n');
+
+    console.log(createSuccessBox(fullMessage, 'Success'));
   } else {
     throw new Error('Installation failed on all clients');
   }
