@@ -8,6 +8,8 @@ CLI tool to install [Heurist](https://mcp.heurist.ai/) MCP tools into compatible
 npx -y heurist-mcp-cli
 # or
 pnpm dlx heurist-mcp-cli
+# or
+bunx heurist-mcp-cli
 ```
 
 ## Usage
@@ -46,8 +48,8 @@ Lists clients where the tool can be installed.
 ## Development
 
 1. Clone the repo.
-2. `npm install`
-3. `npm run dev`
+2. `npm install` or `pnpm install` or `bun install`
+3. `npm run dev` or `pnpm dev` or `bun run dev`
 
 ## Acknowledgements
 
