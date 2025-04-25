@@ -30,13 +30,14 @@
     "format": "biome format --write",
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint && npm run format && npm run build",
-    "release": "release-it"
+    "release": "dotenv release-it --"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/node": "^22.15.0",
+    "dotenv-cli": "^8.0.0",
     "esbuild": "^0.25.3",
     "release-it": "^19.0.1",
     "typescript": "^5.8.3"
