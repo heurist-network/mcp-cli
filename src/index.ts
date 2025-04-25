@@ -7,20 +7,11 @@
  * on all detected clients with visual feedback.
  */
 import chalk from 'chalk';
-import { Command } from 'commander';
+import { Command, CommanderError } from 'commander';
 import { createErrorBox, createWelcomeBox, createInfoBox } from './utils.js';
 import { VALID_CLIENTS } from './constants.js';
 import { listCommand, installCommand } from './commands.js';
 import packageJson from '../package.json';
-
-console.log(
-  createWelcomeBox(
-    `${chalk.bold('Heurist MCP Tool Installer')}\n
-This tool will install a Heurist MCP server tool in your compatible clients.
-${chalk.dim(`Supported clients: ${VALID_CLIENTS.join(', ')}`)}`,
-    'Welcome',
-  ),
-);
 
 const program = new Command();
 
@@ -46,6 +37,14 @@ program
   .argument('<api_key>', 'api key')
   .argument('[client]', 'specific client to install to')
   .action(async (urlInput, apiKey, client) => {
+    console.log(
+      createWelcomeBox(
+        `${chalk.bold('Heurist MCP Tool Installer')}\n
+This tool will install a Heurist MCP server tool in your compatible clients.
+${chalk.dim(`Supported clients: ${VALID_CLIENTS.join(', ')}`)}`,
+        'Welcome',
+      ),
+    );
     try {
       let url = urlInput;
       // check if the url looks like a short tool id (e.g., '0f1234de')
@@ -87,7 +86,12 @@ ${chalk.red(error instanceof Error ? error.message : String(error))}`,
   try {
     await program.parseAsync();
   } catch (err) {
-    // show help box on argument errors
+    // ignore version exit
+    if (err instanceof CommanderError && err.code === 'commander.version') {
+      process.exit(0);
+    }
+
+    // otherwise, it's likely an argument error, show the custom help box
     console.log(
       createInfoBox(
         `${chalk.bold('Usage')}\n
