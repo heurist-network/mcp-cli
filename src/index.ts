@@ -91,7 +91,10 @@ ${chalk.red(error instanceof Error ? error.message : String(error))}`,
       process.exit(0);
     }
 
-    // otherwise, it's likely an argument error, show the custom help box
+    console.error(
+      chalk.red(`${err instanceof Error ? err.message : String(err)}\n`),
+    );
+
     console.log(
       createInfoBox(
         `${chalk.bold('Usage')}\n
