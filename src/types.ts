@@ -3,12 +3,14 @@ export interface ClientFileTarget {
   path: string;
 }
 
-export interface ClientCommandTarget {
-  type: 'command';
-  command: string;
+export interface ClientProtocolTarget {
+  type: 'protocol';
+  protocol: string;
+  path: string;
+  isInsiders?: boolean;
 }
 
-export type ClientInstallTarget = ClientCommandTarget | ClientFileTarget;
+export type ClientInstallTarget = ClientFileTarget | ClientProtocolTarget;
 
 export interface ClientConfig {
   mcpServers: Record<string, ConfiguredServer | UrlBasedServer>;

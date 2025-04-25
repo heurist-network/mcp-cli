@@ -1,6 +1,10 @@
 import os from 'node:os';
 import path from 'node:path';
-import type { SupportedPlatform } from './types.js';
+import type {
+  SupportedPlatform,
+  ValidClient,
+  ClientInstallTarget,
+} from './types.js';
 
 export const VALID_CLIENTS = [
   'claude',
@@ -38,3 +42,21 @@ export const DEFAULT_PATHS = {
   windsurf: path.join(homeDir, '.codeium', 'windsurf', 'mcp_config.json'),
   cursor: path.join(homeDir, '.cursor', 'mcp.json'),
 } as const;
+
+export const clientPaths: Record<ValidClient, ClientInstallTarget> = {
+  claude: { type: 'file', path: DEFAULT_PATHS.claude },
+  windsurf: { type: 'file', path: DEFAULT_PATHS.windsurf },
+  cursor: { type: 'file', path: DEFAULT_PATHS.cursor },
+  vscode: {
+    type: 'protocol',
+    protocol: 'vscode',
+    path: 'mcp/install',
+    isInsiders: false,
+  },
+  'vscode-insiders': {
+    type: 'protocol',
+    protocol: 'vscode-insiders',
+    path: 'mcp/install',
+    isInsiders: true,
+  },
+};

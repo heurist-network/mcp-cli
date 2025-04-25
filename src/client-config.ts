@@ -1,29 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { VALID_CLIENTS, DEFAULT_PATHS } from './constants.js';
+import { execSync } from 'node:child_process';
+import { VALID_CLIENTS, DEFAULT_PATHS, clientPaths } from './constants.js';
 import type {
   ValidClient,
-  ClientCommandTarget,
   ClientConfig,
   ClientFileTarget,
   ClientInstallTarget,
+  ClientProtocolTarget,
   UrlBasedServer,
 } from './types.js';
-
-const clientPaths: Record<ValidClient, ClientInstallTarget> = {
-  claude: { type: 'file', path: DEFAULT_PATHS.claude },
-  windsurf: { type: 'file', path: DEFAULT_PATHS.windsurf },
-  cursor: { type: 'file', path: DEFAULT_PATHS.cursor },
-  vscode: {
-    type: 'command',
-    command: process.platform === 'win32' ? 'code.cmd' : 'code',
-  },
-  'vscode-insiders': {
-    type: 'command',
-    command:
-      process.platform === 'win32' ? 'code-insiders.cmd' : 'code-insiders',
-  },
-};
+import open from 'open';
 
 function getConfigPath(client?: ValidClient): ClientInstallTarget {
   const normalizedClient = (client?.toLowerCase() || 'claude') as ValidClient;
@@ -43,7 +30,7 @@ function getConfigPath(client?: ValidClient): ClientInstallTarget {
 export function readConfig(client: ValidClient): ClientConfig {
   try {
     const configPath = getConfigPath(client);
-    if (configPath.type === 'command' || !fs.existsSync(configPath.path)) {
+    if (!fs.existsSync(configPath.path)) {
       return { mcpServers: {} };
     }
 
@@ -63,37 +50,33 @@ export function writeConfig(config: ClientConfig, client?: ValidClient): void {
   }
 
   const configPath = getConfigPath(client);
-  if (configPath.type === 'command') {
-    writeConfigCommand(config, configPath);
+  if (configPath.type === 'protocol') {
+    writeConfigProtocol(config, configPath);
   } else {
     writeConfigFile(config, configPath, client);
   }
 }
 
-function writeConfigCommand(
+function writeConfigProtocol(
   config: ClientConfig,
-  target: ClientCommandTarget,
+  target: ClientProtocolTarget,
 ): void {
-  const args = Object.entries(config.mcpServers).flatMap(([name, server]) => [
-    '--add-mcp',
-    JSON.stringify({
-      name,
-      type: 'sse',
-      url: (server as UrlBasedServer).url,
-    }),
-  ]);
+  const serverConfig: Record<string, any> = {};
 
-  try {
-    const { execFileSync } = require('node:child_process');
-    execFileSync(target.command, args);
-  } catch (error) {
-    if (error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
-      throw new Error(
-        `Command '${target.command}' not found. Make sure ${target.command} is installed and on your PATH`,
-      );
-    }
-    throw error;
-  }
+  Object.entries(config.mcpServers).forEach(([name, server]) => {
+    serverConfig.name = name;
+    serverConfig.type = 'sse';
+    serverConfig.url = (server as UrlBasedServer).url;
+  });
+
+  const protocolPrefix = target.isInsiders ? 'vscode-insiders' : 'vscode';
+  const protocolUrl = `${protocolPrefix}:${target.path}?${encodeURIComponent(JSON.stringify(serverConfig))}`;
+
+  open(protocolUrl).catch((error: Error) => {
+    throw new Error(
+      `Failed to open ${protocolPrefix} protocol URL: ${error.message}. Please copy and paste this URL manually into your browser: ${protocolUrl}`,
+    );
+  });
 }
 
 function writeConfigFile(
@@ -134,16 +117,33 @@ function writeConfigFile(
   fs.writeFileSync(target.path, JSON.stringify(finalConfig, null, 2));
 }
 
+function isVSCodeInstalled(target: ClientProtocolTarget): boolean {
+  const vsCommand = target.isInsiders
+    ? process.platform === 'win32'
+      ? 'code-insiders.cmd'
+      : 'code-insiders'
+    : process.platform === 'win32'
+      ? 'code.cmd'
+      : 'code';
+
+  try {
+    execSync(`${vsCommand} --version`, { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function detectInstalledClients(): ValidClient[] {
   return VALID_CLIENTS.filter((client) => {
     try {
       const configPath = getConfigPath(client);
       if (configPath.type === 'file') {
         return fs.existsSync(configPath.path);
+      } else if (configPath.type === 'protocol') {
+        // For protocol-based clients like VS Code, we need to check if they're installed
+        return isVSCodeInstalled(configPath);
       }
-      const { execSync } = require('node:child_process');
-      execSync(`${configPath.command} --version`, { stdio: 'ignore' });
-      return true;
     } catch {
       return false;
     }
