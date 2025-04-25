@@ -12,7 +12,7 @@ import type {
 } from './types.js';
 import open from 'open';
 
-function getConfigPath(client?: ValidClient): ClientInstallTarget {
+export function getConfigPath(client?: ValidClient): ClientInstallTarget {
   const normalizedClient = (client?.toLowerCase() || 'claude') as ValidClient;
   return (
     clientPaths[normalizedClient] || {

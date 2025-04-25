@@ -1,6 +1,10 @@
 import chalk from 'chalk';
 import Enquirer from 'enquirer';
-import { detectInstalledClients, readConfig } from './client-config.js';
+import {
+  detectInstalledClients,
+  readConfig,
+  getConfigPath,
+} from './client-config.js';
 import { install } from './installer.js';
 import { extractServerIdFromUrl, verifyServer } from './server-verify.js';
 import { createInfoBox } from './utils.js';
@@ -28,8 +32,13 @@ export async function listCommand(): Promise<void> {
 ${installedClients
   .map((client) => {
     const config = readConfig(client);
-    const serverCount = Object.keys(config.mcpServers).length;
-    return `${chalk.cyan(client)}: ${serverCount} MCP server${serverCount !== 1 ? 's' : ''} configured`;
+    const configPath = getConfigPath(client);
+    if (configPath.type === 'protocol') {
+      return `${chalk.cyan(client)}: ${chalk.dim.italic('Configuration managed externally')}`;
+    } else {
+      const serverCount = Object.keys(config.mcpServers).length;
+      return `${chalk.cyan(client)}: ${serverCount} MCP server${serverCount !== 1 ? 's' : ''} configured`;
+    }
   })
   .join('\n')}`,
       'Clients',
