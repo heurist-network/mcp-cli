@@ -43,11 +43,11 @@ async function checkExistingInstallation(client: ValidClient): Promise<void> {
   if (existingServers.length > 0) {
     console.log(
       createWarnBox(
-        `Found existing MCP tools in ${chalk.cyan(client)}:\n${existingServers
+        `Found existing Heurist MCP tool(s) in ${chalk.cyan(client)}:\n${existingServers
           .map(({ displayName }) => chalk.dim(`• ${displayName}`))
           .join(
             '\n',
-          )}\n\nProceeding will ${chalk.yellow('update')} the configuration.`,
+          )}\n\nProceeding will ${chalk.yellow('remove existing')} Heurist MCP tool(s) and install the new one.`,
         'Existing Installation',
       ),
     );
@@ -107,6 +107,14 @@ export async function install(
     try {
       const config = readConfig(client);
       const serverConfig = formatServerConfig(serverDetails, client);
+
+      // remove all existing mcp server entries before adding the new one
+      Object.keys(config.mcpServers).forEach((key) => {
+        if (key.startsWith(MCP_SERVER_ID_PREFIX)) {
+          delete config.mcpServers[key];
+        }
+      });
+
       config.mcpServers[serverId] = serverConfig;
       writeConfig(config, client);
       clientSpinner.succeed(`Installed on ${chalk.cyan(client)}`);
