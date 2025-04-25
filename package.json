@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/node": "^22.15.0",
     "esbuild": "^0.25.3",
@@ -46,6 +47,7 @@
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "enquirer": "^2.4.1",
+    "open": "^10.1.1",
     "ora": "^8.2.0"
   }
 }

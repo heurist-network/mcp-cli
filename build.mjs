@@ -9,4 +9,8 @@ await esbuild.build({
   minify: true,
   treeShaking: true,
   outfile: 'dist/index.cjs',
+  define: {
+    'import.meta.url': 'import_meta_url',
+  },
+  inject: ['./build/import-meta-url-shim.mjs'],
 });
