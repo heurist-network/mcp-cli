@@ -23,13 +23,14 @@
   "homepage": "https://mcp.heurist.ai",
   "scripts": {
     "start": "node dist/index.cjs",
-    "build": "tsc && node build.mjs",
+    "build": "node build.mjs",
     "clean": "rm -rf dist",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write --unsafe",
     "format": "biome format --write",
+    "typecheck": "tsc --noEmit",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run lint && npm run format && npm run build",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm run format && npm run build",
     "release": "dotenv release-it -- -i patch"
   },
   "devDependencies": {
