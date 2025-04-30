@@ -165,6 +165,10 @@ ${chalk.dim('→')} Enable Agent Mode for the tool to work:
       );
     }
 
+    specificInstructions.push(
+      `${chalk.yellow('Need help?')}\n${chalk.dim('→ Join our Discord for support:')} ${chalk.cyan('https://discord.gg/heuristai')}`,
+    );
+
     const fullMessage = [successMessage, ...specificInstructions].join('\n\n');
 
     console.log(createSuccessBox(fullMessage, 'Success'));
