@@ -60,10 +60,3 @@ export const CLIENT_PATHS: Record<ValidClient, ClientInstallTarget> = {
     isInsiders: true,
   },
 };
-
-// Special case for Windsurf and Cursor: check if just the config folder exists
-// as Windsurf and Cursor don't create one automatically
-export const FALLBACK_DIR_CLIENTS: Set<ValidClient> = new Set([
-  'windsurf',
-  'cursor',
-]);

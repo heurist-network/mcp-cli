@@ -1,12 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
-import {
-  VALID_CLIENTS,
-  DEFAULT_PATHS,
-  CLIENT_PATHS,
-  FALLBACK_DIR_CLIENTS,
-} from './constants.js';
+import { VALID_CLIENTS, DEFAULT_PATHS, CLIENT_PATHS } from './constants.js';
 import type {
   ValidClient,
   ClientConfig,
@@ -145,11 +140,8 @@ export function detectInstalledClients(): ValidClient[] {
       const configPath = getConfigPath(client);
       if (configPath.type === 'file') {
         const existsFile = fs.existsSync(configPath.path);
-        if (FALLBACK_DIR_CLIENTS.has(client)) {
-          const dirExists = fs.existsSync(path.dirname(configPath.path));
-          return existsFile || dirExists;
-        }
-        return existsFile;
+        const dirExists = fs.existsSync(path.dirname(configPath.path));
+        return existsFile || dirExists;
       }
       return isVSCodeInstalled(configPath);
     } catch {
