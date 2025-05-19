@@ -43,7 +43,7 @@ export const DEFAULT_PATHS = {
   cursor: path.join(homeDir, '.cursor', 'mcp.json'),
 } as const;
 
-export const clientPaths: Record<ValidClient, ClientInstallTarget> = {
+export const CLIENT_PATHS: Record<ValidClient, ClientInstallTarget> = {
   claude: { type: 'file', path: DEFAULT_PATHS.claude },
   windsurf: { type: 'file', path: DEFAULT_PATHS.windsurf },
   cursor: { type: 'file', path: DEFAULT_PATHS.cursor },
@@ -60,3 +60,10 @@ export const clientPaths: Record<ValidClient, ClientInstallTarget> = {
     isInsiders: true,
   },
 };
+
+// Special case for Windsurf and Cursor: check if just the config folder exists
+// as Windsurf and Cursor don't create one automatically
+export const FALLBACK_DIR_CLIENTS: Set<ValidClient> = new Set([
+  'windsurf',
+  'cursor',
+]);

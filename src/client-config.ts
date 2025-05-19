@@ -1,7 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
-import { VALID_CLIENTS, DEFAULT_PATHS, clientPaths } from './constants.js';
+import {
+  VALID_CLIENTS,
+  DEFAULT_PATHS,
+  CLIENT_PATHS,
+  FALLBACK_DIR_CLIENTS,
+} from './constants.js';
 import type {
   ValidClient,
   ClientConfig,
@@ -15,7 +20,7 @@ import open from 'open';
 export function getConfigPath(client?: ValidClient): ClientInstallTarget {
   const normalizedClient = (client?.toLowerCase() || 'claude') as ValidClient;
   return (
-    clientPaths[normalizedClient] || {
+    CLIENT_PATHS[normalizedClient] || {
       type: 'file',
       path: path.join(
         path.dirname(DEFAULT_PATHS.claude),
@@ -139,17 +144,14 @@ export function detectInstalledClients(): ValidClient[] {
     try {
       const configPath = getConfigPath(client);
       if (configPath.type === 'file') {
-        // Special case for Windsurf: check if the windsurf folder exists in .codeium
-        // even if the MCP config file doesn't exist yet as Windsurf doesn't create one automatically
-        if (client === 'windsurf' && !fs.existsSync(configPath.path)) {
-          const windsurfDir = path.dirname(configPath.path);
-          return fs.existsSync(windsurfDir);
+        const existsFile = fs.existsSync(configPath.path);
+        if (FALLBACK_DIR_CLIENTS.has(client)) {
+          const dirExists = fs.existsSync(path.dirname(configPath.path));
+          return existsFile || dirExists;
         }
-        return fs.existsSync(configPath.path);
-      } else if (configPath.type === 'protocol') {
-        // For protocol-based clients like VS Code, we need to check if they're installed
-        return isVSCodeInstalled(configPath);
+        return existsFile;
       }
+      return isVSCodeInstalled(configPath);
     } catch {
       return false;
     }
