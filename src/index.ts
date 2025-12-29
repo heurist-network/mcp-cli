@@ -49,7 +49,7 @@ ${chalk.dim(`Supported clients: ${VALID_CLIENTS.join(', ')}`)}`,
       let url = urlInput;
       // check if the url looks like a short tool id (e.g., '0f1234de')
       if (!urlInput.startsWith('http') && /^[a-f0-9]+$/i.test(urlInput)) {
-        url = `https://sequencer-v2.heurist.xyz/tool${urlInput}/sse`;
+        url = `https://mcp-provisioner.heurist.xyz/tool${urlInput}/sse`;
       }
       await installCommand({ url, apiKey, client });
     } catch (error) {
@@ -103,7 +103,7 @@ ${chalk.dim('→')} Install a tool:
 ${chalk.dim('→')} List detected clients:
   ${chalk.green('heurist-mcp-cli list')}\n
 ${chalk.dim('Example:')}
-  ${chalk.green('heurist-mcp-cli')} ${chalk.dim('https://sequencer-v2.heurist.xyz/tool0f1234de/sse api_key cursor')}`,
+  ${chalk.green('heurist-mcp-cli')} ${chalk.dim('https://mcp-provisioner.heurist.xyz/tool0f1234de/sse api_key cursor')}`,
         'Help',
       ),
     );

@@ -6,8 +6,8 @@ import type { ServerVerificationResponse } from './types.js';
 /**
  * Extract server ID from a tool URL
  * Example URLs:
- * - https://sequencer-v2.heurist.xyz/tool0f1234de/sse
- * - https://sequencer-v2.heurist.xyz/tool0f1234de
+ * - https://mcp-provisioner.heurist.xyz/tool0f1234de/sse
+ * - https://mcp-provisioner.heurist.xyz/tool0f1234de
  */
 export function extractServerIdFromUrl(url: string): string {
   const matches = url.match(/\/tool([a-f0-9]+)(?:\/|$)/);
