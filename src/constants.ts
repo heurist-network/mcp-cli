@@ -17,7 +17,7 @@ export const VALID_CLIENTS = [
 // cursor has a 60 character limit on the server id, or i'd prefer to use `heurist-mcp-`
 export const MCP_SERVER_ID_PREFIX = 'heu-';
 export const MCP_VERIFICATION_ENDPOINT =
-  'https://mcp-provisioner.heurist.xyz/provision/servers/details';
+  'https://mcp-provisioner.heurist.xyz/servers/details';
 
 const homeDir = os.homedir();
 
